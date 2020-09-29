@@ -1,0 +1,40 @@
+{
+    "0e6b1b33b0d519149e846cd3d9bffa7a860fdc38fa1882fbb471e2092d5d8387": [
+        "/e.txt"
+    ],
+    "/e.txt": [
+        "0e6b1b33b0d519149e846cd3d9bffa7a860fdc38fa1882fbb471e2092d5d8387"
+    ],
+    "caddc800bd1fac568f46e625d635e1aab76575dad67a8344da2c4e1f845415ba": [
+        "/d.txt"
+    ],
+    "/d.txt": [
+        "caddc800bd1fac568f46e625d635e1aab76575dad67a8344da2c4e1f845415ba"
+    ],
+    "2236c96d8557de0bb252f2c7bc1fb14a796027ea99b854c519398a5e9a21de4e": [
+        "/f.txt",
+        "/sub/c.txt"
+    ],
+    "/f.txt": [
+        "2236c96d8557de0bb252f2c7bc1fb14a796027ea99b854c519398a5e9a21de4e"
+    ],
+    "/sub/c.txt": [
+        "2236c96d8557de0bb252f2c7bc1fb14a796027ea99b854c519398a5e9a21de4e"
+    ],
+    "7fb54632208cd4d22185ba3bc36662275b508836d01c2a56d31c9ee658f806c4": [
+        "/sub/b.txt"
+    ],
+    "/sub/b.txt": [
+        "7fb54632208cd4d22185ba3bc36662275b508836d01c2a56d31c9ee658f806c4"
+    ],
+    "845fee4c70a210b05ffd8ec0ac32ead05c075b49edf1097d5194a42c7a0eb65a": [
+        "/sub/a.txt",
+        "/sub/g.txt"
+    ],
+    "/sub/a.txt": [
+        "845fee4c70a210b05ffd8ec0ac32ead05c075b49edf1097d5194a42c7a0eb65a"
+    ],
+    "/sub/g.txt": [
+        "845fee4c70a210b05ffd8ec0ac32ead05c075b49edf1097d5194a42c7a0eb65a"
+    ]
+}
