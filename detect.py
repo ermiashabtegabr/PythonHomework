@@ -3,13 +3,14 @@ import sys
 import hashlib
 from os.path import join, getsize
 
+
 class Detect:
 
     def __init__(self, directory, show_new, show_size, delete_duplicates):
-        # Directory from input
+        # Given directory
         self.directory = directory
 
-        # Flags 
+        # Flags
         self.show_new = show_new
         self.show_size = show_size
         self.delete_duplicates = delete_duplicates
@@ -17,10 +18,10 @@ class Detect:
         # Hash dictionary
         self.hash_dict = {}
 
-        # Has a filename as key and file size as value. Used for printing file size
+        # Has a filename as key and file size as value. Used for printing file size.
         self.file_size = {}
 
-        # Contains all files in given directory. Used for separating the hash 
+        # Contains all files in given directory. Used for separating the hash
         # and filename key values
         self.files = []
 
@@ -34,8 +35,6 @@ class Detect:
         and calls read_from_file_and_hash_content function with the path for 
         each file.
 
-        Args:
-            directory (str): directory path to iterate through.
         """
         for i in range(len(self.directory)):
             directory = self.directory[i]
@@ -47,17 +46,38 @@ class Detect:
             for root, dirs, files in os.walk(directory):
                 for filename in files:
                     filepath = os.path.join(root, filename)
-                    filename = filepath[filepath.find('/'):]
+                    filename_without_root = filepath[filepath.find('/'):]
 
-                    # If the self.show_new variable it true, then the files not present in the previous 
+                    # If the self.show_new variable it true, then the files not present in the previous
                     # directory are printed out
 
                     # If the  filename is not a key in the hash dictionary, it is not in the previous directory
-                    if self.show_new and i > 0 and not filename in self.hash_dict:
-                        print(f'{filename} in {directory} is new (not found in {self.directory[i-1]})')
+                    if self.show_new and i > 0:
+                        self.check_if_new_file(filename, directory, self.directory[i-1])
 
-                    self.files.append(filename)
-                    self.read_from_file_and_hash_content(filepath, filename)
+                    self.files.append(filename_without_root)
+                    self.read_from_file_and_hash_content(
+                        filepath, filename_without_root)
+
+
+    def check_if_new_file(self, filename, current_dir, previous_dir):
+        """
+        Checks if filename is a key in the hash dictionary or a subtring of the key, 
+        and if that is the case then the file is not new. Otherwise, if the filename 
+        is not a key or a substring of a key in the dictionary then it is a new file, 
+        and the filename is printed out along with the current and previous directory.
+
+        Args:
+            filename (str): filename to check if the file is in the previous dir
+            current_dir (str): name of the directory current going through 
+            previous_dir (str): name of the previous directory 
+        """
+
+        for key in self.hash_dict.keys():
+            if filename in key:
+                return
+
+        print(f'{filename} in {current_dir} is new (not found in {previous_dir})')
 
 
     def read_from_file_and_hash_content(self, pathname, filename):
@@ -70,14 +90,15 @@ class Detect:
             filename (str): name of the file (does not contain the root direcoty name).
         """
 
+
         file_content = ''
         try:
             with open(pathname, 'r') as f:
                 file_content += f.read()
-        except FileNotFoundError:
-            print(f'{filename} not fount')
-        
-        # Hashing the file content 
+        except Exception as arg:
+            print(f'Exepction occurred: {arg}')
+
+        # Hashing the file content
         byte_value = str.encode(file_content)
         h = hashlib.sha256()
         h.update(byte_value)
@@ -88,11 +109,11 @@ class Detect:
             self.hash_dict[hash_value].append(filename)
             self.files_to_remove.append(pathname)
 
-            # Adding the size of the duplicate files to dictionary. 
+            # Adding the size of the duplicate files to dictionary.
             # Only adding the size of one of these files since all have the same size
             if filename not in self.file_size:
                 self.file_size[filename] = os.path.getsize(pathname)
-            
+
         else:
             self.hash_dict[hash_value] = [filename]
 
@@ -112,12 +133,12 @@ class Detect:
         """
         found_duplicates = False
         for key, value in self.hash_dict.items():
-            
-            # If the value is a filename (is in self.files) and there are more than 
+
+            # If the value is a list of filenames (are in self.files) and there are more than
             # one elements, then these files are duplicates
 
             if len(value) > 1 and value[0] in self.files:
-                self.output(value, key)                    
+                self.output(value, key)
                 found_duplicates = True
 
         if self.delete_duplicates:
@@ -129,11 +150,11 @@ class Detect:
 
     def get_file_size(self, files_list):
         """
-        Goes through a list of files with the same content and returns the size of
-        one of them using self.file_size, since all files have them same size.
+        Goes through a list of files with the same content and returns the size 
+        using self.file_size.
 
         Args:
-            files_list (list): list containing filename where these files have the same content.
+            files_list (list): list containing filenames where these files have the same content.
 
         Returns:
             int: the size of files given as input.
@@ -142,10 +163,10 @@ class Detect:
             if files in self.file_size:
                 return self.file_size[files]
 
-    
+
     def delete_duplicates_from_directories(self):
         """
-        Deletes the duplicate files leaving one file  with unique content remaning
+        Deletes the duplicate files leaving one file with unique content remaning
         """
         for filepath in self.files_to_remove:
             os.remove(filepath)
@@ -154,8 +175,8 @@ class Detect:
 
     def output(self, files_list, hash_values):
         """
-        Output of the duplicates in the given directory and includes the size of the files 
-        if --size flag was included in the command line
+        Output of the duplicates in the given directory and includes the 
+        size of the files if --size flag was included in the command line
 
         Args:
             files_list (list): list of filenames with the same content 
@@ -164,15 +185,12 @@ class Detect:
         print(f'Found duplicates')
 
         first_file = files_list[0]
-        rest_of_the_files = ', '.join(files_list[1:]) if len(files_list) > 2 else files_list[1]
+        rest_of_the_files = ', '.join(files_list[1:]) if len(
+            files_list) > 2 else files_list[1]
 
         print(f'{first_file} = {rest_of_the_files}', end=' ')
 
         if self.show_size:
-            print(f'(size: {self.get_file_size(files_list)})')
+            print(f'(size: {self.get_file_size(files_list)} bytes)')
 
         print(f'Hash value: ({hash_values})\n\n')
-
-
-
-

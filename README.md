@@ -1,9 +1,9 @@
 # Python  Homework
 
-This script is a Python implementation for finding duplicate files in given directory. It does that by hashing the content of every file in given directory and comparing the hash value of each file. The dictionary containg the hash value and files is later on written to meta.json file as json
+This script is a Python implementation for finding duplicate files in given directory. It does that by hashing the content of every file in given directory and comparing the hash value of each file. The dictionary containing the hash value and files is later on written to meta.json file as json. 
 
 ### Usage
-Make the script executable with `chmod a+x detector.py`
+Make the script executable with ```chmod a+x detector.py```  
 Used with single or multiple directories as argument:
 ```bash
 ./detector.py <dir> [dir2...]
@@ -42,6 +42,10 @@ Found 1 duplicate:
 a.txt = d/b.txt (50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095 a9e8ccacd0f6545c)
 Removing d/b.txt
 ``` 
+
+### Assumptions
+I assume that when --new flag is given in command line, and there are more than two directories to iterate through, then the new files are the files not present in all previous directories, as it is more reasonable to check if a filename is present in all not only one. 
+
 
 ### Unit tests
 Can be run with `pytest` or `python3 test_detector.py`

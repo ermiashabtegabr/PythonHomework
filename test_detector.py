@@ -1,5 +1,6 @@
 import pytest
 import os
+import shutil
 from detect import Detect
 
 
@@ -25,6 +26,7 @@ f = test_subdir2 + '/f.txt'
 a_filename = a[a.find('/'):]
 b_filename = b[b.find('/'):]
 c_filename = c[c.find('/'):]
+d_filename = d[d.find('/'):]
 f_filename = f[f.find('/'):]
 
 # Adding to files list to separate the hash keys and the filename keys
@@ -46,7 +48,7 @@ if not os.path.exists(test_subdir2):
 if not os.path.exists(test_subdir):
     os.makedirs(test_subdir)
 
-# Making files and adding content, where some of the files have the same content 
+# Making files and adding content, where some of the files have the same content
 file = open(a, "w")
 file.write("This is file a")
 file.close()
@@ -74,29 +76,27 @@ file.close()
 detect = Detect(dir_list, show_new=False,
                 show_size=True, delete_duplicates=False)
 
+
 def test_duplicates():
     detect.iterate_directories()
     hash_value = detect.hash_dict
 
-    # There are five files with the same content in both directories, 
+    # There are five files with the same content in both directories,
     # and these are dir1/a, dir1/c, dir2/a and dir1/b, dir2/f.
     for value in hash_value.values():
         if len(value) > 1 and value[0] in files_list:
             # If the value in the dictionary has more than one element,
             # then either dir1/a, dir1/c, dir2/a or dir1/b, dir2/f are in the list
-            assert a_filename in hash_value or b_filename in value
-            assert c_filename in hash_value or f_filename in value
+            duplicates = (
+                a_filename in hash_value and c_filename in hash_value and d_filename in hash_value)
+            duplicates2 = (
+                b_filename in hash_value and f_filename in hash_value)
+            assert duplicates or duplicates2
 
     # Asserting that there are two files with the same name, in this case a.txt and b.txt
     assert len(hash_value[a_filename]) == 2
     assert len(hash_value[b_filename]) == 2
 
-
-
-
-
-
-
-
-
-
+    # Remove the files and directories created
+    shutil.rmtree(test_dir)
+    shutil.rmtree(test_dir2)
