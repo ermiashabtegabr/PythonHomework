@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import argparse
-import json
 from detect import Detect
 
 parser = argparse.ArgumentParser(
@@ -10,8 +9,8 @@ parser = argparse.ArgumentParser(
 )
 
 parser.add_argument(
-    'dir', 
-    type=str, 
+    'dir',
+    type=str,
     nargs='+',
     help='a diretory with files to iterate through'
 )
@@ -39,13 +38,8 @@ def run_detector(args):
     detect = Detect(args.dir, args.new, args.size, args.delete)
     detect.iterate_directories()
     detect.find_duplicates()
-    hash_dict = detect.hash_dict
-    f = open('meta.json', 'w')
-    json.dump(hash_dict, f, ensure_ascii=False, indent=4)
-    f.close()
+    detect.write_to_file()
+
 
 args = parser.parse_args()
 run_detector(args)
-
-
-

@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import hashlib
 from os.path import join, getsize
 
@@ -28,7 +29,6 @@ class Detect:
         # Contains duplicate files to be removed
         self.files_to_remove = []
 
-
     def iterate_directories(self):
         """
         Iterates through files in the given directory and its subdirectories,
@@ -53,12 +53,12 @@ class Detect:
 
                     # If the  filename is not a key in the hash dictionary, it is not in the previous directory
                     if self.show_new and i > 0:
-                        self.check_if_new_file(filename, directory, self.directory[i-1])
+                        self.check_if_new_file(
+                            filename, directory, self.directory[i-1])
 
                     self.files.append(filename_without_root)
                     self.read_from_file_and_hash_content(
                         filepath, filename_without_root)
-
 
     def check_if_new_file(self, filename, current_dir, previous_dir):
         """
@@ -79,7 +79,6 @@ class Detect:
 
         print(f'{filename} in {current_dir} is new (not found in {previous_dir})')
 
-
     def read_from_file_and_hash_content(self, pathname, filename):
         """
         Goes through the content of each file and hashes the value, 
@@ -89,7 +88,6 @@ class Detect:
             pathname (str): path for the file to go through (contains the root directory name).
             filename (str): name of the file (does not contain the root direcoty name).
         """
-
 
         file_content = ''
         try:
@@ -123,7 +121,6 @@ class Detect:
         else:
             self.hash_dict[filename] = [hash_value]
 
-
     def find_duplicates(self):
         """
         Goes through the values in the hash dictionary and checks if there is a hash key
@@ -147,7 +144,6 @@ class Detect:
         if not found_duplicates:
             print('There are no duplicates in given directory')
 
-
     def get_file_size(self, files_list):
         """
         Goes through a list of files with the same content and returns the size 
@@ -163,7 +159,6 @@ class Detect:
             if files in self.file_size:
                 return self.file_size[files]
 
-
     def delete_duplicates_from_directories(self):
         """
         Deletes the duplicate files leaving one file with unique content remaning
@@ -171,7 +166,6 @@ class Detect:
         for filepath in self.files_to_remove:
             os.remove(filepath)
             print(f'Removing {filepath}')
-
 
     def output(self, files_list, hash_values):
         """
@@ -194,3 +188,11 @@ class Detect:
             print(f'(size: {self.get_file_size(files_list)} bytes)')
 
         print(f'Hash value: ({hash_values})\n\n')
+
+    def write_to_file(self):
+        """
+        Writes the hash dictionary to a json file
+        """
+        f = open('meta.json', 'w')
+        json.dump(self.hash_dict, f, ensure_ascii=False, indent=4)
+        f.close()
